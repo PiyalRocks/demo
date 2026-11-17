@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Manage Orders{% endblock %}
+{% block content %}
+<h1>Customer Orders</h1>
+<div class="filters">
+  <a class="btn small {{ '' if not current else 'light' }}" href="{{ url_for('admin_orders') }}">All</a>
+  {% for s in statuses %}<a class="btn small {{ '' if current == s else 'light' }}" href="{{ url_for('admin_orders', status=s) }}">{{ s }}</a>{% endfor %}
+</div>
+{% if not orders %}<p class="empty">No orders.</p>{% else %}
+<table>
+  <tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Address</th><th>Status</th><th>Action</th></tr>
+  {% for o in orders %}
+  <tr>
+    <td>{{ o.order_code }}<br><small>{{ o.order_date.strftime('%Y-%m-%d %H:%M') }}</small></td>
+    <td>{{ o.contact_name }}<br><small>{{ o.contact_phone }}</small></td>
+    <td>{% for i in o.items %}{{ i.food.name }} ×{{ i.quantity }}<br>{% endfor %}</td>
+    <td>${{ '%.2f'|format(o.total_amount) }}</td>
+    <td>{{ o.delivery_address }}</td>
+    <td><span class="badge {{ o.status|lower|replace(' ','-') }}">{{ o.status }}</span></td>
+    <td>
+      {% if o.status == 'Pending' %}
+        <form method="post" action="{{ url_for('admin_update_status', order_id=o.order_id) }}" class="inline">
+          <button name="status" value="Accepted" class="btn small">Accept</button>
+          <button name="status" value="Rejected" class="btn small danger">Reject</button>
+        </form>
+      {% else %}
+        <form method="post" action="{{ url_for('admin_update_status', order_id=o.order_id) }}" class="inline">
+          <select name="status">{% for s in statuses %}<option {{ 'selected' if s == o.status }}>{{ s }}</option>{% endfor %}</select>
+          <button class="btn small">Update</button>
+        </form>
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+{% endblock %}

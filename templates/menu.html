@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Our Menu</h1>
+<form class="filters" method="get">
+  <input type="text" name="q" placeholder="Search food..." value="{{ q }}">
+  <select name="category">
+    <option value="">All categories</option>
+    {% for c in categories %}<option value="{{ c.category_id }}" {{ 'selected' if cat == c.category_id }}>{{ c.name }}</option>{% endfor %}
+  </select>
+  <input type="number" step="0.01" min="0" name="min_price" placeholder="Min $" value="{{ min_p if min_p is not none }}">
+  <input type="number" step="0.01" min="0" name="max_price" placeholder="Max $" value="{{ max_p if max_p is not none }}">
+  <button class="btn">Filter</button>
+  <a class="btn light" href="{{ url_for('menu') }}">Reset</a>
+</form>
+{% if not foods %}<p class="empty">No food items found.</p>{% endif %}
+<div class="grid">
+  {% for f in foods %}
+  <div class="card">
+    {% if f.image %}<img src="{{ f.image }}" alt="{{ f.name }}">{% else %}<div class="ph">🍴</div>{% endif %}
+    <div class="card-body">
+      <span class="tag">{{ f.category.name if f.category }}</span>
+      <h3>{{ f.name }}</h3>
+      <p>{{ f.description }}</p>
+      <div class="row">
+        <strong>${{ '%.2f'|format(f.price) }}</strong>
+        {% if f.is_available %}
+          <form method="post" action="{{ url_for('cart_add', food_id=f.food_id) }}"><button class="btn small">Add to Cart</button></form>
+        {% else %}<span class="badge red">Unavailable</span>{% endif %}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

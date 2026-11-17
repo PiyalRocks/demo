@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Tasty Bites{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<header class="nav">
+  <a class="brand" href="{{ url_for('menu') }}">🍽️ Tasty Bites</a>
+  <nav>
+    <a href="{{ url_for('menu') }}">Menu</a>
+    {% if is_admin %}
+      <a href="{{ url_for('admin_orders') }}">Orders</a>
+      <a href="{{ url_for('admin_foods') }}">Food Items</a>
+      <a href="{{ url_for('admin_logout') }}">Admin Logout</a>
+    {% elif me %}
+      <a href="{{ url_for('cart_view') }}">Cart ({{ cart_count }})</a>
+      <a href="{{ url_for('my_orders') }}">My Orders</a>
+      <span class="hello">Hi, {{ me.name.split()[0] }}</span>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    {% else %}
+      <a href="{{ url_for('login') }}">Login</a>
+      <a href="{{ url_for('register') }}">Register</a>
+      <a href="{{ url_for('admin_login') }}" class="muted">Admin</a>
+    {% endif %}
+  </nav>
+</header>
+<main class="container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in messages %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+<footer>Restaurant Management System &middot; SWE Course Project</footer>
+</body>
+</html>

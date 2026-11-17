@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Your Cart{% endblock %}
+{% block content %}
+<h1>Your Cart</h1>
+{% if not cart.items %}
+  <p class="empty">Your cart is empty. <a href="{{ url_for('menu') }}">Browse the menu</a></p>
+{% else %}
+<table>
+  <tr><th>Item</th><th>Price</th><th>Quantity</th><th>Subtotal</th><th></th></tr>
+  {% for i in cart.items %}
+  <tr>
+    <td>{{ i.food.name }} {% if not i.food.is_available %}<span class="badge red">Unavailable</span>{% endif %}</td>
+    <td>${{ '%.2f'|format(i.food.price) }}</td>
+    <td class="qty">
+      <form method="post" action="{{ url_for('cart_update', item_id=i.id, action='dec') }}"><button class="btn small light">−</button></form>
+      <span>{{ i.quantity }}</span>
+      <form method="post" action="{{ url_for('cart_update', item_id=i.id, action='inc') }}"><button class="btn small light">+</button></form>
+    </td>
+    <td>${{ '%.2f'|format(i.get_subtotal()) }}</td>
+    <td><form method="post" action="{{ url_for('cart_update', item_id=i.id, action='remove') }}"><button class="btn small danger">Remove</button></form></td>
+  </tr>
+  {% endfor %}
+</table>
+<p class="total">Total: <strong>${{ '%.2f'|format(cart.get_total()) }}</strong></p>
+<a class="btn" href="{{ url_for('checkout') }}">Proceed to Checkout</a>
+{% endif %}
+{% endblock %}

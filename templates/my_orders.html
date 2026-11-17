@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}My Orders{% endblock %}
+{% block content %}
+<h1>My Orders</h1>
+{% if not orders %}<p class="empty">No orders yet.</p>{% else %}
+<table>
+  <tr><th>Order ID</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th></tr>
+  {% for o in orders %}
+  <tr>
+    <td><a href="{{ url_for('order_confirmation', code=o.order_code) }}">{{ o.order_code }}</a></td>
+    <td>{{ o.order_date.strftime('%Y-%m-%d %H:%M') }}</td>
+    <td>{% for i in o.items %}{{ i.food.name }} ×{{ i.quantity }}{% if not loop.last %}, {% endif %}{% endfor %}</td>
+    <td>${{ '%.2f'|format(o.total_amount) }}</td>
+    <td><span class="badge {{ o.status|lower|replace(' ','-') }}">{{ o.status }}</span></td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+{% endblock %}

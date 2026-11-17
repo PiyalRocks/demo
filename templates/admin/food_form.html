@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Food Item{% endblock %}
+{% block content %}
+<div class="box"><h1>{{ 'Edit' if food else 'Add' }} Food Item</h1>
+<form method="post">
+  <label>Name<input name="name" value="{{ food.name if food }}" required></label>
+  <label>Description<textarea name="description" rows="3">{{ food.description if food }}</textarea></label>
+  <label>Price ($)<input type="number" step="0.01" min="0" name="price" value="{{ food.price if food }}" required></label>
+  <label>Image URL (optional)<input name="image" value="{{ food.image if food }}"></label>
+  <label>Category
+    <select name="category_id" required>
+      {% for c in categories %}<option value="{{ c.category_id }}" {{ 'selected' if food and food.category_id == c.category_id }}>{{ c.name }}</option>{% endfor %}
+    </select>
+  </label>
+  <label class="check"><input type="checkbox" name="is_available" {{ 'checked' if (not food) or food.is_available }}> Available</label>
+  <button class="btn">Save</button>
+  <a class="btn light" href="{{ url_for('admin_foods') }}">Cancel</a>
+</form></div>
+{% endblock %}

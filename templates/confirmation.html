@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Order Confirmed{% endblock %}
+{% block content %}
+<div class="box center">
+  <h1>✅ Order Confirmed!</h1>
+  <p>Thank you, {{ order.contact_name }}. Your order ID is</p>
+  <p class="code">{{ order.order_code }}</p>
+  <table>
+    {% for i in order.items %}<tr><td>{{ i.food.name }} × {{ i.quantity }}</td><td>${{ '%.2f'|format(i.unit_price * i.quantity) }}</td></tr>{% endfor %}
+    <tr><th>Total</th><th>${{ '%.2f'|format(order.total_amount) }}</th></tr>
+  </table>
+  <p>Deliver to: {{ order.delivery_address }}</p>
+  <p>Status: <span class="badge {{ order.status|lower|replace(' ','-') }}">{{ order.status }}</span></p>
+  <a class="btn" href="{{ url_for('my_orders') }}">Track my orders</a>
+</div>
+{% endblock %}
